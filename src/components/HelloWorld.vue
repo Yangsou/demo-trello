@@ -1,8 +1,5 @@
 <template>
   <div class="container">
-    <button>
-      add
-    </button>
     <div class="wrap">
       <div
         v-for="column in columns"
@@ -13,7 +10,35 @@
           :column="column"
           :handleAddTask="handleAddTask"
           :handleDragTaskEnd="handleDragTaskEnd"
+          :handleClickEdit="handleClickEdit"
+          :handleDeleteColumn="handleDeleteColumn"
+          :handleDeleteTask="handleDeleteTask"
         ></Column>
+      </div>
+      <div class="column">
+        <div class="relative full-height">
+          <input
+            type="text"
+            placeholder="Add new column"
+            class="column_title column_title-create"
+            v-model="newColumnTitle"
+            v-on:keyup.enter="handleAddColumn"
+          />
+          <button
+            class="btn btn-border btn-add-column"
+            v-on:click="handleAddColumn"
+          >
+            add column
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="dialog" v-if="showForm">
+      <div class="dialog_container">
+        <FormTask
+          :task="taskEdit"
+          :handleSubmit="handleSubmit"
+        ></FormTask>
       </div>
     </div>
   </div>
@@ -21,9 +46,10 @@
 
 <script>
 import Column from './Column'
+import FormTask from './FormTask'
 
 export default {
-  components: {Column},
+  components: {Column, FormTask},
   name: 'HelloWorld',
   data () {
     return {
@@ -76,10 +102,37 @@ export default {
             }
           ]
         }
-      ]
+      ],
+      newColumnTitle: '',
+      showForm: false,
+      taskEdit: {}
     }
   },
   methods: {
+    handleAddColumn () {
+      let title = this.newColumnTitle
+      let newColumn = {
+        id: Date.now().toString(),
+        title,
+        tasks: []
+      }
+      if (title.trim() !== '') {
+        this.columns.push(newColumn)
+        this.newColumnTitle = ''
+        console.log('title', title)
+      }
+    },
+    handleDeleteColumn (id) {
+      this.columns = this.columns.filter(a => a.id !== id)
+    },
+    handleDeleteTask (taskID, columnID) {
+      console.log(taskID, columnID)
+      let columns = this.columns
+      let coloumnDelete = columns.filter(a => a.id === columnID)[0]
+      // remove task out old column
+      let coloumnDeleteTasks = coloumnDelete.tasks.filter(a => a.id !== taskID)
+      coloumnDelete.tasks = coloumnDeleteTasks
+    },
     handleAddTask (task, callBack) {
       // console.log('add task', task)
       let columnID = task.columnID
@@ -103,6 +156,30 @@ export default {
       let columnTo = columns.filter(a => a.id === dataDragged.to)[0]
       // console.log(columnTo, taskDragged)
       columnTo.tasks.push(taskDragged)
+    },
+    handleClickEdit (taskID, columnID) {
+      let task = this.columns.filter(a => a.id === columnID)[0].tasks.filter(b => b.id === taskID)[0]
+      console.log(task)
+      task.columnID = columnID
+      this.showForm = true
+      this.taskEdit = task
+      // console.log(columnID)
+    },
+    handleSubmit (columnID, taskID, title, description) {
+      console.log('handleSubmit', title)
+      console.log('handleSubmit', description)
+      let task = {
+        id: taskID,
+        title,
+        description
+      }
+      let columnEditted = this.columns.filter(a => a.id === columnID)[0]
+      let columnEdittedTasks = columnEditted.tasks
+      columnEdittedTasks = columnEdittedTasks.filter(a => a.id !== taskID)
+      columnEdittedTasks.push(task)
+      columnEditted.tasks = columnEdittedTasks
+      console.log('columnEditted', columnEdittedTasks)
+      this.showForm = false
     }
   }
 }
