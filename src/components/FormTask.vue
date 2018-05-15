@@ -16,9 +16,15 @@
     ></textarea>
     <button
       v-on:click="handleSubmit(task.columnID, task.id, newTitle, newDescription)"
-      class="btn column_create_btn"
+      class="btn column_create_btn btn-submit"
     >
       Save
+    </button>
+    <button
+      v-on:click="handleCloseDialog"
+      class="btn column_create_btn"
+    >
+      Cancel
     </button>
   </div>
 </template>
@@ -27,7 +33,8 @@ export default {
   name: 'FormTask',
   props: {
     task: {},
-    handleSubmit: Function
+    handleSubmit: Function,
+    handleCloseDialog: Function
   },
   data () {
     return {
@@ -35,18 +42,13 @@ export default {
       newTitle: this.task.title,
       newDescription: this.task.description
     }
-  },
-  mounted () {
-    // let _task = this.task
-    // this.task = _task
-  },
-  methods: {
-    // handleChangeTitle () {
-    //   console.log('change')
-    // },
-    // handleChangeDescription () {
-    //   console.log('change')
-    // }
   }
 }
 </script>
+<style lang="scss" scoped>
+  @import "../_default.scss";
+  .btn-submit{
+    background-color: $color-green;
+    color: $color-white;
+  }
+</style>

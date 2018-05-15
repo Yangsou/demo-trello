@@ -38,6 +38,7 @@
         <FormTask
           :task="taskEdit"
           :handleSubmit="handleSubmit"
+          :handleCloseDialog="handleCloseDialog"
         ></FormTask>
       </div>
     </div>
@@ -165,6 +166,9 @@ export default {
       this.taskEdit = task
       // console.log(columnID)
     },
+    handleCloseDialog () {
+      this.showForm = false
+    },
     handleSubmit (columnID, taskID, title, description) {
       console.log('handleSubmit', title)
       console.log('handleSubmit', description)
@@ -187,6 +191,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
+  @import "../default";
   h1, h2 {
     font-weight: normal;
   }
@@ -225,5 +230,20 @@ export default {
     margin: 0 8px;
     padding: 8px;
     white-space: normal;
+  }
+  .dialog{
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 99;
+    background: rgba($color-black, 0.34);
+    &_container{
+      width: 70%;
+      min-width: 320px;
+      max-width: 596px;
+      margin: 30px auto;
+    }
   }
 </style>

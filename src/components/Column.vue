@@ -136,8 +136,7 @@ export default {
 }
 </script>
 <style lang="scss">
-$color-black: #222;
-$color-green: #00695C;
+@import "../default";
 .relative{
   position: relative;
   &-column{
